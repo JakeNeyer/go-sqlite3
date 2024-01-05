@@ -1487,6 +1487,10 @@ func (d *SQLiteDriver) Open(dsn string) (driver.Conn, error) {
 		}
 
 		// Load the extensions
+		rv = C.sqlite3_enable_load_extension(db, 1)
+		if rv != C.SQLITE_OK {
+			return nil, errors.New(C.GoString(C.sqlite3_errmsg(db)))
+		}
 		for _, ext := range d.VFSExtentensions {
 			clib := C.CString(ext)
 			defer C.free(unsafe.Pointer(clib))

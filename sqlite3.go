@@ -1466,10 +1466,11 @@ func (d *SQLiteDriver) Open(dsn string) (driver.Conn, error) {
 	// we'll attach the real database later
 	var db *C.sqlite3
 	if len(d.VFSExtentensions) > 0 {
+		tempName := C.CString(":memory:")
 		name := C.CString(dsn)
 		defer C.free(unsafe.Pointer(name))
 		var vfs *C.char
-		rv := C._sqlite3_open_v2(name, &db,
+		rv := C._sqlite3_open_v2(tempName, &db,
 			mutex|C.SQLITE_OPEN_READWRITE|C.SQLITE_OPEN_CREATE,
 			vfs)
 		if rv != 0 {
